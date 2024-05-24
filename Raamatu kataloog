@@ -1,0 +1,52 @@
+class Book:
+    """Raamatu mudel."""
+
+    def __init__(self, title: str, author: str, price: float, rating: float):
+        """Konstruktor, mis määrab raamatule tiitli, autori, hinna ja reitingu."""
+        self.title = title
+        self.author = author
+        self.price = price
+        self.rating = rating
+
+
+class Store:
+    """Raamatupoe mudel."""
+
+    def __init__(self, name: str, rating: float):
+        """Konstruktor, mis määrab raamatupoele nime ja minimaalse reitingu."""
+        self.name = name
+        self.min_rating = rating
+        self.inventory = []
+
+    def can_add_book(self, book: Book) -> bool:
+        """Kontrollib, kas raamatut saab poodi lisada."""
+        if any(b.title == book.title and b.author == book.author for b in self.inventory):
+            return False
+        return book.rating >= self.min_rating
+
+    def add_book(self, book: Book):
+        """Lisab raamatu poodi, kui see on võimalik."""
+        if self.can_add_book(book):
+            self.inventory.append(book)
+
+    def can_remove_book(self, book: Book) -> bool:
+        """Kontrollib, kas raamatut saab poest eemaldada."""
+        return book in self.inventory
+
+    def remove_book(self, book: Book):
+        """Eemaldab raamatu poest, kui see on võimalik."""
+        if self.can_remove_book(book):
+            self.inventory.remove(book)
+
+    def get_all_books(self) -> list:
+        """Tagastab nimekirja kõigist poes olevatest raamatutest."""
+        return self.inventory
+
+    def get_books_by_price(self) -> list:
+        """Tagastab raamatute nimekirja, sorteeritud hinna alusel."""
+        return sorted(self.inventory, key=lambda book: book.price)
+
+    def get_most_popular_book(self) -> list:
+        """Tagastab nimekirja kõige populaarsematest raamatutest poes."""
+        highest_rating = max(book.rating for book in self.inventory)
+        return [book for book in self.inventory if book.rating == highest_rating]
